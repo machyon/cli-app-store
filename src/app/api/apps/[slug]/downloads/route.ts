@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { ApiError, handle, ok, parse, parseQuery } from "@/lib/api";
+import { ApiError, cacheable, handle, parse, parseQuery } from "@/lib/api";
 import { listDownloads } from "@/lib/repo";
 import { DownloadsQuerySchema, SlugParamsSchema } from "@/lib/schemas";
 
@@ -9,6 +9,6 @@ export const GET = handle(
     const filter = parseQuery(DownloadsQuerySchema, request.nextUrl);
     const data = await listDownloads(slug, filter);
     if (!data) throw new ApiError("not_found", `No app with slug "${slug}"`);
-    return ok({ data });
+    return cacheable({ data }, 60);
   },
 );

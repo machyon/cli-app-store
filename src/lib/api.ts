@@ -29,8 +29,18 @@ export function fail(code: ErrorCode, message: string, details?: unknown, header
   return NextResponse.json(body, { status: STATUS[code], ...(headers && { headers }) });
 }
 
-export function ok<T>(body: T, status = 200): NextResponse {
-  return NextResponse.json(body, { status });
+export function ok<T>(body: T, status = 200, headers?: HeadersInit): NextResponse {
+  return NextResponse.json(body, { status, ...(headers && { headers }) });
+}
+
+/**
+ * Successful GET responses that CDNs and browsers may cache: fresh for `maxAge`
+ * seconds, then served stale for up to a further `maxAge * 5` while revalidating.
+ */
+export function cacheable<T>(body: T, maxAge = 60): NextResponse {
+  return ok(body, 200, {
+    "Cache-Control": `public, s-maxage=${maxAge}, stale-while-revalidate=${maxAge * 5}`,
+  });
 }
 
 /** Validates input with Zod; throws ApiError(400) with the issues on failure. */
