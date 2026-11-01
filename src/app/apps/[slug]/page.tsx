@@ -4,23 +4,31 @@ import { notFound } from "next/navigation";
 import { Downloads } from "@/components/Downloads";
 import { CopyButton } from "@/components/CopyButton";
 import { ForkIcon, GitHubIcon, Glyph, OsTags, StarIcon, StatusBadge } from "@/components/ui";
-import { apps, date, getApp } from "@/lib/store";
+import { getAppBySlug, listApps } from "@/lib/repo";
+import { date } from "@/lib/store";
 
-export function generateStaticParams() {
-  return apps.map((a) => ({ slug: a.slug }));
+export async function generateStaticParams() {
+  const { data } = await listApps({ sort: "name", limit: 100, offset: 0 });
+  return data.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata(props: PageProps<"/apps/[slug]">): Promise<Metadata> {
-  const app = getApp((await props.params).slug);
+  const app = await getAppBySlug((await props.params).slug);
   return app ? { title: app.name, description: app.tagline } : {};
 }
 
 export default async function AppPage(props: PageProps<"/apps/[slug]">) {
   const { slug } = await props.params;
-  const a = getApp(slug);
+  const a = await getAppBySlug(slug);
   if (!a) notFound();
 
-  const related = apps.filter((x) => x.category_slug === a.category_slug && x.id !== a.id);
+  const { data: sameCategory } = await listApps({
+    category: a.category_slug,
+    sort: "stars",
+    limit: 7,
+    offset: 0,
+  });
+  const related = sameCategory.filter((x) => x.id !== a.id).slice(0, 6);
   const transcript = a.demo.map((l) => l.text).join("\n");
 
   const meta: [string, React.ReactNode][] = [
@@ -130,15 +138,17 @@ export default async function AppPage(props: PageProps<"/apps/[slug]">) {
             <div className="px-4 pb-4">
               <OsTags support={a.support} />
             </div>
-            <a
-              href={a.github_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mx-4 mb-4 flex items-center justify-center gap-1.5 border border-line px-2.5 py-1.5 text-sm transition-colors hover:border-ink hover:bg-hover"
-            >
-              <GitHubIcon />
-              View on GitHub
-            </a>
+            {a.github_url && (
+              <a
+                href={a.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mx-4 mb-4 flex items-center justify-center gap-1.5 border border-line px-2.5 py-1.5 text-sm transition-colors hover:border-ink hover:bg-hover"
+              >
+                <GitHubIcon />
+                View on GitHub
+              </a>
+            )}
           </div>
         </aside>
       </div>

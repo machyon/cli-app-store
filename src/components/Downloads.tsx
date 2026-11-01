@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { OS_LABEL, fileSize, type App, type InstallOption, type OS } from "@/lib/store";
+import { OS_LABEL, fileSize, type AppDetail, type InstallOption, type OS } from "@/lib/store";
 import { CopyButton } from "./CopyButton";
 
 type Sys = { os: OS | null; distro: string | null };
@@ -40,7 +40,7 @@ const subscribeMode = (cb: () => void) => {
   };
 };
 
-export function Downloads({ app }: { app: App }) {
+export function Downloads({ app }: { app: AppDetail }) {
   // Server snapshot is "unknown", so server and client markup match on hydration.
   const detected = useSyncExternalStore(noop, getDetected, () => NONE);
   const mode = useSyncExternalStore(subscribeMode, () => localStorage.getItem(KEY) ?? "auto", () => "auto");
@@ -135,7 +135,7 @@ export function Downloads({ app }: { app: App }) {
   );
 }
 
-function Binaries({ app, bins, sys }: { app: App; bins: App["downloads"]; sys: Sys }) {
+function Binaries({ app, bins, sys }: { app: AppDetail; bins: AppDetail["downloads"]; sys: Sys }) {
   if (!bins.length) return null;
   return (
     <Group title={`Binaries${app.latest_version ? ` · v${app.latest_version}` : ""}`}>

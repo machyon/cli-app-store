@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { OS_LABEL, OS_LIST, compact, type App, type Category, type OS } from "@/lib/store";
+import { OS_LABEL, OS_LIST, compact, type AppSummary, type Category, type OS } from "@/lib/store";
 import { GitHubIcon, Glyph, OsTags, StarIcon, StatusBadge } from "./ui";
 
 type Sort = "stars" | "name" | "recent";
 
-export function Catalog({ apps, categories }: { apps: App[]; categories: Category[] }) {
+export function Catalog({ apps, categories }: { apps: AppSummary[]; categories: Category[] }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
   const [os, setOs] = useState<OS | "any">("any");
@@ -39,9 +39,7 @@ export function Catalog({ apps, categories }: { apps: App[]; categories: Categor
     const r = apps.filter((a) => {
       if (cat !== "all" && a.category_slug !== cat) return false;
       if (os !== "any" && !a.support.includes(os)) return false;
-      const hay = [a.name, a.tagline, a.about, a.category, a.language ?? "", ...a.features]
-        .join(" ")
-        .toLowerCase();
+      const hay = [a.name, a.tagline, a.category, a.language ?? ""].join(" ").toLowerCase();
       return terms.every((t) => hay.includes(t));
     });
     return r.sort((a, b) =>
@@ -175,7 +173,7 @@ export function Catalog({ apps, categories }: { apps: App[]; categories: Categor
   );
 }
 
-function AppCard({ app: a, index }: { app: App; index: number }) {
+function AppCard({ app: a, index }: { app: AppSummary; index: number }) {
   return (
     <article
       style={{ animationDelay: `${Math.min(index, 8) * 30}ms` }}
@@ -206,16 +204,18 @@ function AppCard({ app: a, index }: { app: App; index: number }) {
           {compact(a.stars_count)}
           {a.language && <span className="ml-2">{a.language}</span>}
         </span>
-        <a
-          href={a.github_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${a.name} on GitHub`}
-          className="relative z-10 inline-flex items-center gap-1.5 border border-line px-2.5 py-1 text-ink transition-colors hover:border-ink hover:bg-hover"
-        >
-          <GitHubIcon />
-          GitHub
-        </a>
+        {a.github_url && (
+          <a
+            href={a.github_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${a.name} on GitHub`}
+            className="relative z-10 inline-flex items-center gap-1.5 border border-line px-2.5 py-1 text-ink transition-colors hover:border-ink hover:bg-hover"
+          >
+            <GitHubIcon />
+            GitHub
+          </a>
+        )}
       </div>
     </article>
   );
