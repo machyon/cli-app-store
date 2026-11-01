@@ -1,13 +1,12 @@
 import "server-only";
-import fs from "node:fs";
-import path from "node:path";
 import pg from "pg";
 import type { z } from "zod";
 
+/** PEM CA certificate from the DATABASE_CA env var (\n escapes are expanded). */
 function readCa(): string {
-  const fromEnv = process.env.DATABASE_CA;
-  if (fromEnv) return fromEnv.replace(/\\n/g, "\n");
-  return fs.readFileSync(path.join(process.cwd(), "certs", "ca.pem"), "utf8");
+  const ca = process.env.DATABASE_CA;
+  if (!ca) throw new Error("DATABASE_CA is not set");
+  return ca.replace(/\\n/g, "\n");
 }
 
 function createPool(): pg.Pool {
