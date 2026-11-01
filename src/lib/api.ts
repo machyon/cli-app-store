@@ -1,5 +1,6 @@
 import "server-only";
 import { isIP } from "node:net";
+import { unstable_rethrow } from "next/navigation";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import type { ApiErrorBody } from "@/lib/schemas";
@@ -149,6 +150,8 @@ export function handle<A extends unknown[]>(
     try {
       return await fn(...args);
     } catch (err) {
+      // Let Next.js control-flow errors (prerender bail-outs, redirect, notFound) through.
+      unstable_rethrow(err);
       if (err instanceof ApiError) return fail(err.code, err.message, err.details, err.headers);
       const mapped = fromPgError(err);
       if (mapped) return fail(mapped.code, mapped.message);

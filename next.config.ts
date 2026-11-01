@@ -5,7 +5,9 @@ const isDev = process.env.NODE_ENV === "development";
 /* Static CSP for public pages. A nonce would force every page to render per
  * request and break prerendering/CDN caching, so public pages allow inline
  * scripts (Next.js streams its RSC payload inline) but lock down everything
- * else. /admin gets a strict nonce-based CSP from src/proxy.ts instead. */
+ * else. /admin gets a strict nonce-based CSP from src/proxy.ts instead.
+ * upgrade-insecure-requests is left out: HSTS already forces https in production,
+ * and the directive breaks `next start` on plain-http localhost. */
 const publicCsp = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
@@ -17,12 +19,11 @@ const publicCsp = [
   `base-uri 'self'`,
   `form-action 'self'`,
   `frame-ancestors 'none'`,
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [
   // Browsers ignore HSTS on plain-http localhost, so this is safe in dev.
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

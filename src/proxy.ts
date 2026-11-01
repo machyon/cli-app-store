@@ -24,7 +24,6 @@ function adminCsp(nonce: string): string {
     `base-uri 'none'`,
     `form-action 'self'`,
     `frame-ancestors 'none'`,
-    ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 }
 
