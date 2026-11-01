@@ -1,0 +1,1064 @@
+{
+ "categories": [
+  {
+   "id": 1,
+   "slug": "search",
+   "name": "Search",
+   "description": "Find text and files fast.",
+   "sort_order": 1
+  },
+  {
+   "id": 2,
+   "slug": "git",
+   "name": "Git",
+   "description": "Version control from the terminal.",
+   "sort_order": 2
+  },
+  {
+   "id": 3,
+   "slug": "files",
+   "name": "Files",
+   "description": "Browse, view, and list files.",
+   "sort_order": 3
+  },
+  {
+   "id": 4,
+   "slug": "monitoring",
+   "name": "Monitoring",
+   "description": "Watch system resources.",
+   "sort_order": 4
+  },
+  {
+   "id": 5,
+   "slug": "multiplexer",
+   "name": "Multiplexer",
+   "description": "Panes, tabs, and sessions.",
+   "sort_order": 5
+  }
+ ],
+ "apps": [
+  {
+   "id": "01a17bab-69d3-7d3b-8181-4c37e3ab63cf",
+   "slug": "fzf",
+   "name": "fzf",
+   "tagline": "Fuzzy finder for files, history, and anything else.",
+   "about": "fzf filters any list interactively as you type. Pipe in files, git branches, or shell history and pick the match you want.",
+   "status": "stable",
+   "stars_count": 83894,
+   "github_url": "https://github.com/junegunn/fzf",
+   "updated_at": "2026-11-01T08:12:08.115Z",
+   "category": "Search",
+   "language": "Go",
+   "latest_version": "0.56.3",
+   "latest_released_at": "2024-10-30T00:00:00.000Z",
+   "licenses": [
+    "MIT"
+   ],
+   "forks_count": 4168,
+   "github_owner": "junegunn",
+   "github_repo": "fzf",
+   "support": [
+    "windows",
+    "macos",
+    "linux"
+   ],
+   "category_slug": "search",
+   "features": [
+    "Shell integration for history, files, and directories",
+    "Live preview window for the selected item",
+    "Works as a filter in any pipeline"
+   ],
+   "demo": [
+    {
+     "text": "$ git branch | fzf",
+     "prompt": true
+    },
+    {
+     "text": "> feat/",
+     "prompt": false
+    },
+    {
+     "text": "  feat/search-ui   fix/cache-bug   main",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install fzf"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install fzf"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S fzf"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install fzf"
+    },
+    {
+     "manager_slug": "scoop",
+     "manager": "Scoop",
+     "kind": "other",
+     "os_hint": "windows",
+     "distro_slug": null,
+     "distro": null,
+     "command": "scoop install fzf"
+    },
+    {
+     "manager_slug": "go",
+     "manager": "Go",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "go install github.com/junegunn/fzf@latest"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-7423-b247-01c32cd67781",
+     "version": "0.56.3",
+     "os": "windows",
+     "arch": "x86_64",
+     "file_name": "fzf-0.56.3-windows_amd64.zip",
+     "size_bytes": "1887437",
+     "sha256": "cb5468f519575f0ae24c9ecf764a2c97178707ccc507613cf8a3c3d47d88714c",
+     "download_url": "https://github.com/junegunn/fzf/releases/download/v0.56.3/fzf-0.56.3-windows_amd64.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-74c4-935f-a62695274558",
+     "version": "0.56.3",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "fzf-0.56.3-darwin_arm64.tar.gz",
+     "size_bytes": "1677722",
+     "sha256": "c92fe74bbae82d640729c3a54bff8e694fb5a37d9dd27cb9a075a25032580e4f",
+     "download_url": "https://github.com/junegunn/fzf/releases/download/v0.56.3/fzf-0.56.3-darwin_arm64.tar.gz"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7550-bb51-004ea3c13c7a",
+     "version": "0.56.3",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "fzf-0.56.3-linux_amd64.tar.gz",
+     "size_bytes": "1782579",
+     "sha256": "cf0f789d5c9c7a9a5f33d143b41efcb8f73007812a1e259e010622e8b172a583",
+     "download_url": "https://github.com/junegunn/fzf/releases/download/v0.56.3/fzf-0.56.3-linux_amd64.tar.gz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69cd-7d11-8090-e7d500619d49",
+   "slug": "lazygit",
+   "name": "lazygit",
+   "tagline": "A simple terminal UI for git commands.",
+   "about": "lazygit turns staging hunks, rebasing, and resolving conflicts into a few keystrokes. It runs in any terminal and works on top of your existing repositories.",
+   "status": "stable",
+   "stars_count": 83576,
+   "github_url": "https://github.com/jesseduffield/lazygit",
+   "updated_at": "2026-11-01T08:12:08.116Z",
+   "category": "Git",
+   "language": "Go",
+   "latest_version": "0.44.1",
+   "latest_released_at": "2024-10-12T00:00:00.000Z",
+   "licenses": [
+    "MIT"
+   ],
+   "forks_count": 3241,
+   "github_owner": "jesseduffield",
+   "github_repo": "lazygit",
+   "support": [
+    "windows",
+    "macos",
+    "linux"
+   ],
+   "category_slug": "git",
+   "features": [
+    "Stage individual lines and hunks with one key",
+    "Interactive rebase, cherry-pick, and bisect views",
+    "Custom commands and configurable keybindings"
+   ],
+   "demo": [
+    {
+     "text": "$ lazygit",
+     "prompt": true
+    },
+    {
+     "text": "Status  Files  Branches  Commits  Stash",
+     "prompt": false
+    },
+    {
+     "text": "main  3 files changed, 2 staged",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install lazygit"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install lazygit"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S lazygit"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install lazygit"
+    },
+    {
+     "manager_slug": "scoop",
+     "manager": "Scoop",
+     "kind": "other",
+     "os_hint": "windows",
+     "distro_slug": null,
+     "distro": null,
+     "command": "scoop install lazygit"
+    },
+    {
+     "manager_slug": "go",
+     "manager": "Go",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "go install github.com/jesseduffield/lazygit@latest"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-713a-97e8-f93494eb098e",
+     "version": "0.44.1",
+     "os": "windows",
+     "arch": "x86_64",
+     "file_name": "lazygit_0.44.1_Windows_x86_64.zip",
+     "size_bytes": "7340032",
+     "sha256": "c7e5c1c4d9d47c5468feb3dbf6565d814cc738e5e6c4392c450a0ac37f25409c",
+     "download_url": "https://github.com/jesseduffield/lazygit/releases/download/v0.44.1/lazygit_0.44.1_Windows_x86_64.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-71db-a0ac-296dbd36a93a",
+     "version": "0.44.1",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "lazygit_0.44.1_Darwin_arm64.tar.gz",
+     "size_bytes": "6920602",
+     "sha256": "9ac1babbc0fbb162499860b6f1300485d853591bd01e527f1e2f3ddeb2e5f912",
+     "download_url": "https://github.com/jesseduffield/lazygit/releases/download/v0.44.1/lazygit_0.44.1_Darwin_arm64.tar.gz"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-726f-b049-01db885e47fe",
+     "version": "0.44.1",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "lazygit_0.44.1_Linux_x86_64.tar.gz",
+     "size_bytes": "7130317",
+     "sha256": "a962ab3b90cf4586e0720178085350319046bece0f21864842cc2dabd5c5a856",
+     "download_url": "https://github.com/jesseduffield/lazygit/releases/download/v0.44.1/lazygit_0.44.1_Linux_x86_64.tar.gz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69b1-7df7-9650-e2851e8837af",
+   "slug": "ripgrep",
+   "name": "ripgrep",
+   "tagline": "Recursive search that respects your gitignore.",
+   "about": "ripgrep searches directories for a regex pattern, skipping hidden and ignored files by default. It is built for speed on large codebases and handles Unicode correctly.",
+   "status": "stable",
+   "stars_count": 69601,
+   "github_url": "https://github.com/BurntSushi/ripgrep",
+   "updated_at": "2026-11-01T08:12:08.116Z",
+   "category": "Search",
+   "language": "Rust",
+   "latest_version": "14.1.1",
+   "latest_released_at": "2024-11-24T00:00:00.000Z",
+   "licenses": [
+    "MIT",
+    "Unlicense"
+   ],
+   "forks_count": 4195,
+   "github_owner": "BurntSushi",
+   "github_repo": "ripgrep",
+   "support": [
+    "windows",
+    "macos",
+    "linux"
+   ],
+   "category_slug": "search",
+   "features": [
+    "Respects .gitignore and skips binary files automatically",
+    "Searches compressed files and multiple encodings",
+    "Colored output with context lines and JSON mode"
+   ],
+   "demo": [
+    {
+     "text": "$ rg \"TODO\" src/",
+     "prompt": true
+    },
+    {
+     "text": "src/main.rs:12:    // TODO: handle errors",
+     "prompt": false
+    },
+    {
+     "text": "src/lib.rs:48:    // TODO: add tests",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install ripgrep"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install ripgrep"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S ripgrep"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install ripgrep"
+    },
+    {
+     "manager_slug": "scoop",
+     "manager": "Scoop",
+     "kind": "other",
+     "os_hint": "windows",
+     "distro_slug": null,
+     "distro": null,
+     "command": "scoop install ripgrep"
+    },
+    {
+     "manager_slug": "cargo",
+     "manager": "Cargo",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "cargo install ripgrep"
+    },
+    {
+     "manager_slug": "snap",
+     "manager": "Snap",
+     "kind": "other",
+     "os_hint": "linux",
+     "distro_slug": null,
+     "distro": null,
+     "command": "sudo snap install ripgrep --classic"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c79e-7471-ad3d-10eacd6d89f3",
+     "version": "14.1.1",
+     "os": "windows",
+     "arch": "x86_64",
+     "file_name": "ripgrep-14.1.1-x86_64-pc-windows-msvc.zip",
+     "size_bytes": "2516582",
+     "sha256": "652d36c4d87660966f50d5d092905ccd6fa67aaf1b7415c5938822458f60ec1b",
+     "download_url": "https://github.com/BurntSushi/ripgrep/releases/download/v14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a0-7cc6-b02a-212e072d4394",
+     "version": "14.1.1",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "ripgrep-14.1.1-aarch64-apple-darwin.tar.gz",
+     "size_bytes": "1992294",
+     "sha256": "cdec1951b7b65a3fdbd3da88a30352575ce080b647492eaadde6b5235d25c92a",
+     "download_url": "https://github.com/BurntSushi/ripgrep/releases/download/v14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz"
+    },
+    {
+     "asset_id": "01a17bab-c7a0-7fcb-a9bb-2f62fcc975e2",
+     "version": "14.1.1",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
+     "size_bytes": "2202010",
+     "sha256": "d8ed790fd847b0735aab7ed9463e47f8862243cb61ec8741dcc2340d66b57461",
+     "download_url": "https://github.com/BurntSushi/ripgrep/releases/download/v14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69d3-7f36-a53f-b5cfef8b6bb1",
+   "slug": "bat",
+   "name": "bat",
+   "tagline": "A cat clone with syntax highlighting and git integration.",
+   "about": "bat prints files with syntax highlighting, line numbers, and git change markers. It pages long output automatically and falls back to plain text when piped.",
+   "status": "stable",
+   "stars_count": 61004,
+   "github_url": "https://github.com/sharkdp/bat",
+   "updated_at": "2026-11-01T08:12:08.114Z",
+   "category": "Files",
+   "language": "Rust",
+   "latest_version": "0.24.0",
+   "latest_released_at": "2024-01-08T00:00:00.000Z",
+   "licenses": [
+    "Apache-2.0",
+    "MIT"
+   ],
+   "forks_count": 3087,
+   "github_owner": "sharkdp",
+   "github_repo": "bat",
+   "support": [
+    "windows",
+    "macos",
+    "linux"
+   ],
+   "category_slug": "files",
+   "features": [
+    "Syntax highlighting for hundreds of languages",
+    "Shows git additions and deletions in the gutter",
+    "Automatic paging for long files"
+   ],
+   "demo": [
+    {
+     "text": "$ bat main.rs",
+     "prompt": true
+    },
+    {
+     "text": "   1 fn main() {",
+     "prompt": false
+    },
+    {
+     "text": "   2     println!(\"hello\");",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install bat"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install bat"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S bat"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install bat"
+    },
+    {
+     "manager_slug": "scoop",
+     "manager": "Scoop",
+     "kind": "other",
+     "os_hint": "windows",
+     "distro_slug": null,
+     "distro": null,
+     "command": "scoop install bat"
+    },
+    {
+     "manager_slug": "cargo",
+     "manager": "Cargo",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "cargo install bat"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-76a1-a740-3fba89902d5f",
+     "version": "0.24.0",
+     "os": "windows",
+     "arch": "x86_64",
+     "file_name": "bat-v0.24.0-x86_64-pc-windows-msvc.zip",
+     "size_bytes": "3145728",
+     "sha256": "0b4ebac073a6bb9be02a37381fba3606d4769865b0cb2012db403850802a53d9",
+     "download_url": "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-x86_64-pc-windows-msvc.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7717-9ca3-a33b4ff38756",
+     "version": "0.24.0",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "bat-v0.24.0-aarch64-apple-darwin.tar.gz",
+     "size_bytes": "2831155",
+     "sha256": "8efc09c430419ecbd0c194914e6056859379c723c468fb7092928b09e9136d3e",
+     "download_url": "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-aarch64-apple-darwin.tar.gz"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7776-a5ce-1bb9e7c8f04a",
+     "version": "0.24.0",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "bat-v0.24.0-x86_64-unknown-linux-musl.tar.gz",
+     "size_bytes": "3040870",
+     "sha256": "8eb6b5d1b080dd35b0c1722a6d71fc4c588632913e4f556c6543829dfe9f08cf",
+     "download_url": "https://github.com/sharkdp/bat/releases/download/v0.24.0/bat-v0.24.0-x86_64-unknown-linux-musl.tar.gz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69d4-735f-bc63-09b2eac580e3",
+   "slug": "yazi",
+   "name": "yazi",
+   "tagline": "Blazing fast terminal file manager with image previews.",
+   "about": "yazi browses large folders without blocking, using async I/O. It previews images, video thumbnails, and archives right in the terminal.",
+   "status": "experimental",
+   "stars_count": 43154,
+   "github_url": "https://github.com/sxyazi/yazi",
+   "updated_at": "2026-11-01T08:12:08.116Z",
+   "category": "Files",
+   "language": "Rust",
+   "latest_version": "0.4.2",
+   "latest_released_at": "2024-11-20T00:00:00.000Z",
+   "licenses": [
+    "MIT"
+   ],
+   "forks_count": 1055,
+   "github_owner": "sxyazi",
+   "github_repo": "yazi",
+   "support": [
+    "windows",
+    "macos",
+    "linux"
+   ],
+   "category_slug": "files",
+   "features": [
+    "Async I/O keeps the interface responsive",
+    "Inline previews for images, PDFs, and archives",
+    "Lua plugins and custom themes"
+   ],
+   "demo": [
+    {
+     "text": "$ yazi",
+     "prompt": true
+    },
+    {
+     "text": "~/projects   docs/  src/  README.md",
+     "prompt": false
+    },
+    {
+     "text": "preview: README.md  (1.2 KB)",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install yazi"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install yazi"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S yazi"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install yazi"
+    },
+    {
+     "manager_slug": "scoop",
+     "manager": "Scoop",
+     "kind": "other",
+     "os_hint": "windows",
+     "distro_slug": null,
+     "distro": null,
+     "command": "scoop install yazi"
+    },
+    {
+     "manager_slug": "cargo",
+     "manager": "Cargo",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "cargo install --locked yazi-fm yazi-cli"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-78df-b429-7f0b52795524",
+     "version": "0.4.2",
+     "os": "windows",
+     "arch": "x86_64",
+     "file_name": "yazi-x86_64-pc-windows-msvc.zip",
+     "size_bytes": "15728640",
+     "sha256": "d868904ab9047d60069c1fd7b2cf14ed06299a81d4a49e5cc857fe85e8a08c3c",
+     "download_url": "https://github.com/sxyazi/yazi/releases/download/v0.4.2/yazi-x86_64-pc-windows-msvc.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7932-9d67-a9369bb4cbe2",
+     "version": "0.4.2",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "yazi-aarch64-apple-darwin.zip",
+     "size_bytes": "13631488",
+     "sha256": "866c271d60abc69395a80eaeac76b792a656a0bd66062e0e05c3fcf91a1fed95",
+     "download_url": "https://github.com/sxyazi/yazi/releases/download/v0.4.2/yazi-aarch64-apple-darwin.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7985-b100-cd214312e429",
+     "version": "0.4.2",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "yazi-x86_64-unknown-linux-gnu.zip",
+     "size_bytes": "14680064",
+     "sha256": "751bd8970c61cf76b4fca12c99fe3aa15a7aa1b86a0967b9d15b7aec146badb2",
+     "download_url": "https://github.com/sxyazi/yazi/releases/download/v0.4.2/yazi-x86_64-unknown-linux-gnu.zip"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69d4-71a9-8e02-dee4d693e281",
+   "slug": "zellij",
+   "name": "zellij",
+   "tagline": "A terminal workspace with batteries included.",
+   "about": "zellij organizes panes and tabs into layouts you can save and share. A plugin system and floating panes keep long sessions tidy.",
+   "status": "beta",
+   "stars_count": 35917,
+   "github_url": "https://github.com/zellij-org/zellij",
+   "updated_at": "2026-11-01T08:12:08.116Z",
+   "category": "Multiplexer",
+   "language": "Rust",
+   "latest_version": "0.41.2",
+   "latest_released_at": "2024-11-15T00:00:00.000Z",
+   "licenses": [
+    "MIT"
+   ],
+   "forks_count": 1516,
+   "github_owner": "zellij-org",
+   "github_repo": "zellij",
+   "support": [
+    "macos",
+    "linux"
+   ],
+   "category_slug": "multiplexer",
+   "features": [
+    "Saved layouts for repeatable workspaces",
+    "Floating and stacked panes",
+    "WebAssembly plugin system"
+   ],
+   "demo": [
+    {
+     "text": "$ zellij --layout dev",
+     "prompt": true
+    },
+    {
+     "text": "[1] editor   [2] server   [3] logs",
+     "prompt": false
+    },
+    {
+     "text": "pane: server  listening on :3000",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install zellij"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install zellij"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S zellij"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install zellij"
+    },
+    {
+     "manager_slug": "cargo",
+     "manager": "Cargo",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "cargo install --locked zellij"
+    },
+    {
+     "manager_slug": "nix",
+     "manager": "Nix",
+     "kind": "other",
+     "os_hint": "linux",
+     "distro_slug": null,
+     "distro": null,
+     "command": "nix-env -iA nixpkgs.zellij"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-77e6-ae2d-e1d58a8fc83a",
+     "version": "0.41.2",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "zellij-aarch64-apple-darwin.tar.gz",
+     "size_bytes": "10485760",
+     "sha256": "f878c961593d29265d980af9f6a4675c98044856d93aaebbee72ef917ea6cd27",
+     "download_url": "https://github.com/zellij-org/zellij/releases/download/v0.41.2/zellij-aarch64-apple-darwin.tar.gz"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-786b-9f1a-8f8f2021a757",
+     "version": "0.41.2",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "zellij-x86_64-unknown-linux-musl.tar.gz",
+     "size_bytes": "11534336",
+     "sha256": "68406100ecd5bdbf23920afb8b11539ecbaedc469bcbad8d1cfed35056756d96",
+     "download_url": "https://github.com/zellij-org/zellij/releases/download/v0.41.2/zellij-x86_64-unknown-linux-musl.tar.gz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69d3-794b-ad37-086433c8a084",
+   "slug": "btop",
+   "name": "btop",
+   "tagline": "Resource monitor for CPU, memory, disks, and network.",
+   "about": "btop shows live system usage with graphs, per-process details, and mouse support. Themes and layout presets make it easy to tune for any screen size.",
+   "status": "stable",
+   "stars_count": 35202,
+   "github_url": "https://github.com/aristocratos/btop",
+   "updated_at": "2026-11-01T08:12:08.115Z",
+   "category": "Monitoring",
+   "language": "C++",
+   "latest_version": "1.4.0",
+   "latest_released_at": "2024-09-03T00:00:00.000Z",
+   "licenses": [
+    "Apache-2.0"
+   ],
+   "forks_count": 1252,
+   "github_owner": "aristocratos",
+   "github_repo": "btop",
+   "support": [
+    "macos",
+    "linux"
+   ],
+   "category_slug": "monitoring",
+   "features": [
+    "Responsive graphs for CPU, memory, disk, and network",
+    "Sort, filter, and signal processes from the keyboard",
+    "Dozens of built-in color themes"
+   ],
+   "demo": [
+    {
+     "text": "$ btop",
+     "prompt": true
+    },
+    {
+     "text": "cpu  [|||||||||     ] 47%",
+     "prompt": false
+    },
+    {
+     "text": "mem  [||||||||||||  ] 63%",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install btop"
+    },
+    {
+     "manager_slug": "dnf",
+     "manager": "dnf",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "fedora",
+     "distro": "Fedora / RHEL",
+     "command": "sudo dnf install btop"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S btop"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install btop"
+    },
+    {
+     "manager_slug": "snap",
+     "manager": "Snap",
+     "kind": "other",
+     "os_hint": "linux",
+     "distro_slug": null,
+     "distro": null,
+     "command": "sudo snap install btop"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-7304-837d-9baa19b80d65",
+     "version": "1.4.0",
+     "os": "macos",
+     "arch": "arm64",
+     "file_name": "btop-aarch64-macos.tbz",
+     "size_bytes": "943718",
+     "sha256": "f490ab80d0276b35024936727349b15d206c132cdf3a03ddf56ca9cdfe9e5efa",
+     "download_url": "https://github.com/aristocratos/btop/releases/download/v1.4.0/btop-aarch64-macos.tbz"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-738b-af95-7a8d2f283d3c",
+     "version": "1.4.0",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "btop-x86_64-linux-musl.tbz",
+     "size_bytes": "1153434",
+     "sha256": "f70fc2207db99c9cefa30c7b3c13bbb2b4312b1008ab650ea63e269c37348739",
+     "download_url": "https://github.com/aristocratos/btop/releases/download/v1.4.0/btop-x86_64-linux-musl.tbz"
+    }
+   ]
+  },
+  {
+   "id": "01a17bab-69d4-74da-96ce-1996f10429f0",
+   "slug": "exa",
+   "name": "exa",
+   "tagline": "A modern replacement for ls with colors and icons.",
+   "about": "exa lists files with color-coded types, git status, and tree views. The project is in maintenance mode, and its fork eza is the recommended successor.",
+   "status": "maintenance",
+   "stars_count": 24449,
+   "github_url": "https://github.com/ogham/exa",
+   "updated_at": "2026-11-01T08:12:08.115Z",
+   "category": "Files",
+   "language": "Rust",
+   "latest_version": "0.10.1",
+   "latest_released_at": "2021-06-02T00:00:00.000Z",
+   "licenses": [
+    "MIT"
+   ],
+   "forks_count": 651,
+   "github_owner": "ogham",
+   "github_repo": "exa",
+   "support": [
+    "macos",
+    "linux"
+   ],
+   "category_slug": "files",
+   "features": [
+    "Color-coded file types and permissions",
+    "Git status column and tree view",
+    "Extended attributes and size sorting"
+   ],
+   "demo": [
+    {
+     "text": "$ exa -l --git",
+     "prompt": true
+    },
+    {
+     "text": "drwxr-xr-x  -  src   -M",
+     "prompt": false
+    },
+    {
+     "text": "-rw-r--r-- 1.2k README.md  -N",
+     "prompt": false
+    }
+   ],
+   "install": [
+    {
+     "manager_slug": "apt",
+     "manager": "apt",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "debian",
+     "distro": "Debian / Ubuntu",
+     "command": "sudo apt install exa"
+    },
+    {
+     "manager_slug": "pacman",
+     "manager": "pacman",
+     "kind": "distro",
+     "os_hint": "linux",
+     "distro_slug": "arch",
+     "distro": "Arch Linux",
+     "command": "sudo pacman -S exa"
+    },
+    {
+     "manager_slug": "homebrew",
+     "manager": "Homebrew",
+     "kind": "other",
+     "os_hint": "macos",
+     "distro_slug": null,
+     "distro": null,
+     "command": "brew install exa"
+    },
+    {
+     "manager_slug": "cargo",
+     "manager": "Cargo",
+     "kind": "other",
+     "os_hint": null,
+     "distro_slug": null,
+     "distro": null,
+     "command": "cargo install exa"
+    }
+   ],
+   "downloads": [
+    {
+     "asset_id": "01a17bab-c7a1-79e2-93a9-07c1ebf507dd",
+     "version": "0.10.1",
+     "os": "macos",
+     "arch": "x86_64",
+     "file_name": "exa-macos-x86_64-v0.10.1.zip",
+     "size_bytes": "838861",
+     "sha256": "54b51ddaaa0eb690fa2963d4d45687563867ddc2d71d95d085b4700d9915c918",
+     "download_url": "https://github.com/ogham/exa/releases/download/v0.10.1/exa-macos-x86_64-v0.10.1.zip"
+    },
+    {
+     "asset_id": "01a17bab-c7a1-7a37-8c70-a8516bea4e4f",
+     "version": "0.10.1",
+     "os": "linux",
+     "arch": "x86_64",
+     "file_name": "exa-linux-x86_64-v0.10.1.zip",
+     "size_bytes": "943718",
+     "sha256": "efc5ba16de5ca133674197249df33cbe9561a07313d4a6ebb27c4bf915ddca0a",
+     "download_url": "https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip"
+    }
+   ]
+  }
+ ]
+}
