@@ -152,7 +152,17 @@ Views filter `apps.is_published` where it matters (`app_feature_list`, `app_inst
 | `cpu_arch` | `x86_64`, `arm64`, `x86`, `armv7` |
 | `package_manager_kind` | `distro`, `other` |
 
-### 4.2 Domains and functions
+### 4.2 Generated columns
+
+Found on 2026-11-01 with `select column_name, generation_expression from information_schema.columns where is_generated = 'ALWAYS'`. Inserts and updates must leave these columns out, or Postgres raises `cannot insert a non-DEFAULT value`.
+
+| Column | Expression |
+| --- | --- |
+| `apps.github_url` | `'https://github.com/' || github_owner || '/' || github_repo` |
+| `apps.search_vector` | `setweight(to_tsvector('english', name), 'A') || setweight(to_tsvector('english', tagline), 'B') || setweight(to_tsvector('english', about), 'C')` |
+| `app_demo_lines.is_prompt` | `left(content, 2) = '$ '` |
+
+### 4.3 Domains and functions
 
 No user-defined domains. Public functions are `set_updated_at()` (trigger function, see §6) and the `pg_trgm` functions (`similarity`, `word_similarity`, `show_trgm`, …) which come from the extension.
 
@@ -209,8 +219,8 @@ The main catalog table.
 | `is_published` | boolean | NN | `true` | Hides the app from published views |
 | `created_at` | timestamptz | NN | `now()` | |
 | `updated_at` | timestamptz | NN | `now()` | **Maintained by trigger `apps_set_updated_at`** (§6) |
-| `github_url` | text | yes | — | |
-| `search_vector` | tsvector | yes | — | Full-text index (GIN). **Maintained by trigger `apps_set_search_vector`** (§6): weight A = `name`, B = `tagline`, C = `about`, English config |
+| `github_url` | text | yes | generated | **Generated column** (`GENERATED ALWAYS … STORED`): `'https://github.com/' || github_owner || '/' || github_repo`. Can't be written; set owner/repo instead |
+| `search_vector` | tsvector | yes | generated | Full-text index (GIN). **Generated column**: weight A = `name`, B = `tagline`, C = `about`, English config. Trigger `apps_set_search_vector` (§6.3) also exists, but the generated expression decides the stored value |
 
 ### 5.5 `app_licenses`
 
@@ -236,7 +246,7 @@ Junction table: apps ↔ licenses.
 | `app_id` | uuid | NN | PK part, FK → `apps.id` `ON DELETE CASCADE` |
 | `line_no` | smallint | NN | PK part, must be `> 0` |
 | `content` | text | NN | Transcript line |
-| `is_prompt` | boolean | yes | Whether the line is a shell prompt. No default |
+| `is_prompt` | boolean | yes | **Generated column**: `left(content, 2) = '$ '`. Can't be written; a line is a prompt when it starts with `$ ` |
 
 ### 5.8 `app_os_support`
 
@@ -371,7 +381,7 @@ Append-only. Rows can only be inserted.
 | --- | --- | --- | --- | --- |
 | `id` | uuid | NN | `uuidv7()` | PK |
 | `user_id` | uuid | yes | — | FK → `admin_users.id` `ON DELETE SET NULL`. NULL for failed logins with an unknown email |
-| `action` | text | NN | — | Dotted lower-case name, e.g. `login.success`, `login.failure`, `app.create`, `app.update`, `app.delete`, `logout`, `password.change` |
+| `action` | text | NN | — | Dotted lower-case name, e.g. `login.success`, `login.failure`, `session.logout`, `app.create`, `app.update`, `app.delete`, `password.change`, `admin.create`, `admin.password_reset` |
 | `target_type` | text | yes | — | e.g. `app`, `admin_user` |
 | `target_id` | text | yes | — | |
 | `details` | jsonb | yes | — | Context such as changed field names. Never holds passwords or tokens |

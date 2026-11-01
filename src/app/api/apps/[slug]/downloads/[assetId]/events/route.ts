@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
-import { ApiError, fail, handle, ok, parse, parseJsonBody, rateLimit } from "@/lib/api";
+import { ApiError, clientIp, fail, handle, ok, parse, parseJsonBody, rateLimit } from "@/lib/api";
 import { recordDownloadEvent } from "@/lib/repo";
 import { DownloadEventBodySchema, DownloadEventParamsSchema } from "@/lib/schemas";
 
 export const POST = handle(
   async (request: NextRequest, ctx: RouteContext<"/api/apps/[slug]/downloads/[assetId]/events">) => {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const ip = clientIp(request) ?? "unknown";
     const retryAfter = rateLimit(`download-event:${ip}`, 30, 60_000);
     if (retryAfter !== null) {
       return fail("rate_limited", "Too many requests", undefined, { "Retry-After": String(retryAfter) });

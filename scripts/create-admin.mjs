@@ -11,7 +11,8 @@
 import readline from "node:readline";
 import { parseArgs } from "node:util";
 import { connect } from "./db-client.mjs";
-import { hashPassword, PASSWORD_MAX, PASSWORD_MIN } from "../src/lib/auth/argon2.mjs";
+import { hashPassword } from "../src/lib/auth/argon2.mjs";
+import { PASSWORD_MAX, PASSWORD_MIN } from "../src/lib/auth/policy.mjs";
 
 const { values } = parseArgs({
   options: {
@@ -33,7 +34,13 @@ if (displayName && displayName.length > 100) {
 }
 
 /** Reads one line from stdin; hides input when attached to a terminal. */
-function readSecret(prompt) {
+async function readSecret(prompt) {
+  if (!process.stdin.isTTY) {
+    // Piped input: read to EOF and use the first line (a trailing newline is optional).
+    let data = "";
+    for await (const chunk of process.stdin) data += chunk;
+    return data.split(/\r?\n/)[0] ?? "";
+  }
   return new Promise((resolve) => {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: process.stdin.isTTY });
     if (process.stdin.isTTY) {
@@ -82,7 +89,7 @@ try {
     ]);
     await client.query(
       `INSERT INTO admin_audit_log (user_id, action, target_type, target_id, details)
-       VALUES ($1, 'admin.password_reset', 'admin_user', $1, '{"via":"cli"}')`,
+       VALUES ($1::uuid, 'admin.password_reset', 'admin_user', $1::text, '{"via":"cli"}')`,
       [rows[0].id],
     );
     console.log(`Password reset for ${email}. All of their sessions were revoked.`);
@@ -97,7 +104,7 @@ try {
     if (rows.length === 0) throw new Error(`An admin with email ${email} already exists (use --reset).`);
     await client.query(
       `INSERT INTO admin_audit_log (user_id, action, target_type, target_id, details)
-       VALUES ($1, 'admin.create', 'admin_user', $1, '{"via":"cli"}')`,
+       VALUES ($1::uuid, 'admin.create', 'admin_user', $1::text, '{"via":"cli"}')`,
       [rows[0].id],
     );
     console.log(`Created admin ${email}.`);

@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
-import { execute, query } from "@/lib/db";
+import { execute, iso, query } from "@/lib/db";
 import {
   AppSummarySchema,
   CategorySchema,
@@ -18,9 +18,6 @@ import {
   type InstallQuery,
   type ListAppsQuery,
 } from "@/lib/schemas";
-
-/** Renders a timestamptz as an ISO-8601 UTC string. */
-const iso = (col: string): string => `to_char(${col} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
 
 const SUMMARY_COLUMNS = `
   a.id, a.slug, a.name, a.tagline, a.status::text AS status,

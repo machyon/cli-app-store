@@ -37,6 +37,9 @@ function getPool(): pg.Pool {
   return globalForPg.__ttyPool;
 }
 
+/** SQL expression rendering a timestamptz column as an ISO-8601 UTC string (millisecond precision). */
+export const iso = (col: string): string => `to_char(${col} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
+
 /** Runs a parameterised query and validates every row with the given Zod schema. */
 export async function query<S extends z.ZodType>(
   schema: S,
@@ -51,4 +54,39 @@ export async function query<S extends z.ZodType>(
 export async function execute(sql: string, params: readonly unknown[] = []): Promise<number> {
   const result = await getPool().query(sql, [...params]);
   return result.rowCount ?? 0;
+}
+
+/** The query helpers bound to one connection inside a transaction. */
+export interface Tx {
+  query<S extends z.ZodType>(schema: S, sql: string, params?: readonly unknown[]): Promise<z.output<S>[]>;
+  execute(sql: string, params?: readonly unknown[]): Promise<number>;
+}
+
+/**
+ * Runs `fn` inside BEGIN/COMMIT on a single pooled connection. Any thrown error
+ * rolls the transaction back and is re-thrown.
+ */
+export async function transaction<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
+  const client = await getPool().connect();
+  const tx: Tx = {
+    async query(schema, sql, params = []) {
+      const { rows } = await client.query<Record<string, unknown>>(sql, [...params]);
+      return rows.map((row) => schema.parse(row));
+    },
+    async execute(sql, params = []) {
+      const result = await client.query(sql, [...params]);
+      return result.rowCount ?? 0;
+    },
+  };
+  try {
+    await client.query("BEGIN");
+    const result = await fn(tx);
+    await client.query("COMMIT");
+    return result;
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
 }

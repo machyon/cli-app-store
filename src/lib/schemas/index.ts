@@ -156,7 +156,18 @@ export const AppListResponseSchema = z
 export const ErrorSchema = z
   .object({
     error: z.object({
-      code: z.enum(["bad_request", "not_found", "rate_limited", "internal_error", "unavailable"]),
+      code: z.enum([
+        "bad_request",
+        "unauthorized",
+        "forbidden",
+        "not_found",
+        "conflict",
+        "payload_too_large",
+        "unsupported_media_type",
+        "rate_limited",
+        "internal_error",
+        "unavailable",
+      ]),
       message: z.string(),
       details: z.unknown().optional(),
     }),

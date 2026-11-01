@@ -77,7 +77,3 @@ export function needsRehash(phc) {
   if (!m) return true;
   return Number(m[1]) < PARAMS.memory || Number(m[2]) < PARAMS.passes;
 }
-
-/** Password policy shared by the API and the CLI (NIST SP 800-63B: length over composition). */
-export const PASSWORD_MIN = 12;
-export const PASSWORD_MAX = 128;
