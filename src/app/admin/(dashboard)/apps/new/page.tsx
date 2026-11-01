@@ -2,6 +2,9 @@ import { AppForm } from "@/components/admin/AppForm";
 import { getLookups } from "@/lib/admin-repo";
 import { requireAdminPage } from "@/lib/auth/dal";
 
+// Reads the session at request time, so it must block rather than prerender.
+export const instant = false;
+
 export default async function NewAppPage() {
   await requireAdminPage();
   const lookups = await getLookups();

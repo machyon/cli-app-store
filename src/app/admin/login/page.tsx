@@ -5,6 +5,9 @@ import { getSession } from "@/lib/auth/dal";
 
 export const metadata: Metadata = { title: "Admin sign in" };
 
+// Reads the session at request time, so it must block rather than prerender.
+export const instant = false;
+
 export default async function LoginPage() {
   if (await getSession()) redirect("/admin");
   return (

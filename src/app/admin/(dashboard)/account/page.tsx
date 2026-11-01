@@ -1,6 +1,9 @@
 import { PasswordForm } from "@/components/admin/PasswordForm";
 import { requireAdminPage } from "@/lib/auth/dal";
 
+// Reads the session at request time, so it must block rather than prerender.
+export const instant = false;
+
 export default async function AccountPage() {
   const { admin } = await requireAdminPage();
   return (

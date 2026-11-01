@@ -5,6 +5,9 @@ import { requireAdminPage } from "@/lib/auth/dal";
 import { AppIdParamsSchema } from "@/lib/schemas/admin";
 import { date } from "@/lib/store";
 
+// Reads the session at request time, so it must block rather than prerender.
+export const instant = false;
+
 export default async function EditAppPage(props: PageProps<"/admin/apps/[id]">) {
   await requireAdminPage();
   const params = AppIdParamsSchema.safeParse(await props.params);

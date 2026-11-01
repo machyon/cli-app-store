@@ -3,6 +3,9 @@ import { AppTable } from "@/components/admin/AppTable";
 import { listAppsAdmin } from "@/lib/admin-repo";
 import { requireAdminPage } from "@/lib/auth/dal";
 
+// Reads the session at request time, so it must block rather than prerender.
+export const instant = false;
+
 export default async function AdminAppsPage() {
   await requireAdminPage();
   const apps = await listAppsAdmin();
