@@ -2,7 +2,7 @@
 
 This document describes the PostgreSQL database behind the CLI app store: how to connect, the schema, constraints, indexes, views, and the trigger(s) that run on writes.
 
-Everything here was taken from the live database on **2026-11-01** (Aiven service `pg-cli-app-store`, project `pengki`), not from migration files. If the schema changes, re-check the live database and update this file.
+Everything here was taken from the live database on **2026-11-01** (Aiven service `pg-cli-app-store`, project `pengki`). The catalog tables (§5.1–5.14) predate migrations. Since then, schema changes are made with migration files in `db/migrations/` (§11). Migration `001_admin_auth.sql` added the admin tables (§5.15–5.18). If the schema changes, re-check the live database and update this file.
 
 ---
 
@@ -96,6 +96,10 @@ linux_distros ◄── package_managers    app_licenses ◄── apps ──�
       │                                                 ├──► app_demo_lines
       │                                                 └──► releases ──► release_assets ──► download_events
       └──────────────────────── download_events (optional distro)
+
+admin_users ──► admin_sessions        (ON DELETE CASCADE)
+     └────────► admin_audit_log       (ON DELETE SET NULL; append-only)
+schema_migrations                     (bookkeeping for db/migrations)
 ```
 
 ### 3.1 Table list
@@ -116,6 +120,10 @@ linux_distros ◄── package_managers    app_licenses ◄── apps ──�
 | `releases` | 8 | Versioned releases of an app |
 | `release_assets` | 21 | Downloadable binaries per release (OS + arch) |
 | `download_events` | 0 | Analytics: one row per asset download |
+| `admin_users` | — | Dashboard administrators (Argon2id password hashes) |
+| `admin_sessions` | — | Server-side admin sessions (only token hashes stored) |
+| `admin_audit_log` | — | Append-only log of admin logins and catalog changes |
+| `schema_migrations` | — | Migration files already applied (§11) |
 
 ### 3.2 Views
 
@@ -319,11 +327,71 @@ Append-only analytics.
 | `detected_distro_id` | integer | yes | — | FK → `linux_distros.id` `ON DELETE SET NULL` |
 | `selected_manually` | boolean | NN | `false` | Whether the user chose the asset manually |
 
+### 5.15 `admin_users`
+
+Added by `001_admin_auth.sql`. There is no sign-up endpoint. Admins are created with `npm run admin:create` (§11).
+
+| Column | Type | Null | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `id` | uuid | NN | `uuidv7()` | PK |
+| `email` | text | NN | — | UQ. Must be lower case (`admin_users_email_lower`), so uniqueness is case-insensitive. Basic format check, max 254 chars |
+| `password_hash` | text | NN | — | Argon2id PHC string (`$argon2id$v=19$m=…,t=…,p=…$salt$hash`). Check `admin_users_password_hash_format` rejects anything else, so plaintext can't be stored |
+| `display_name` | text | yes | — | 1–100 chars when set |
+| `is_active` | boolean | NN | `true` | Inactive admins can't log in, and their sessions stop working |
+| `failed_login_count` | integer | NN | `0` | Consecutive failed logins. `>= 0`. Reset on success |
+| `locked_until` | timestamptz | yes | — | Login refused until this time (lockout after repeated failures) |
+| `last_login_at` | timestamptz | yes | — | |
+| `password_changed_at` | timestamptz | NN | `now()` | |
+| `created_at` | timestamptz | NN | `now()` | |
+| `updated_at` | timestamptz | NN | `now()` | **Maintained by trigger `admin_users_set_updated_at`** (§6) |
+
+### 5.16 `admin_sessions`
+
+One row per login. The cookie holds a random 32-byte token. The database only stores its SHA-256, so a database leak doesn't expose usable sessions.
+
+| Column | Type | Null | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `id` | uuid | NN | `uuidv7()` | PK |
+| `user_id` | uuid | NN | — | FK → `admin_users.id` `ON DELETE CASCADE`. Indexed |
+| `token_hash` | bytea | NN | — | UQ. SHA-256 of the session token, exactly 32 bytes |
+| `csrf_secret` | bytea | NN | — | 32 random bytes. The CSRF token is derived from it |
+| `created_at` | timestamptz | NN | `now()` | |
+| `last_seen_at` | timestamptz | NN | `now()` | Bumped on use (throttled) |
+| `idle_expires_at` | timestamptz | NN | — | Sliding idle timeout (30 min). Must be `<= expires_at` |
+| `expires_at` | timestamptz | NN | — | Absolute lifetime (8 h). Indexed for clean-up |
+| `revoked_at` | timestamptz | yes | — | Set on logout, password change or reset |
+| `ip` | inet | yes | — | Client IP at login |
+| `user_agent` | text | yes | — | Max 512 chars |
+
+### 5.17 `admin_audit_log`
+
+Append-only. Rows can only be inserted.
+
+| Column | Type | Null | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `id` | uuid | NN | `uuidv7()` | PK |
+| `user_id` | uuid | yes | — | FK → `admin_users.id` `ON DELETE SET NULL`. NULL for failed logins with an unknown email |
+| `action` | text | NN | — | Dotted lower-case name, e.g. `login.success`, `login.failure`, `app.create`, `app.update`, `app.delete`, `logout`, `password.change` |
+| `target_type` | text | yes | — | e.g. `app`, `admin_user` |
+| `target_id` | text | yes | — | |
+| `details` | jsonb | yes | — | Context such as changed field names. Never holds passwords or tokens |
+| `ip` | inet | yes | — | |
+| `occurred_at` | timestamptz | NN | `now()` | BRIN index, plus btree `(user_id, occurred_at DESC)` |
+
+### 5.18 `schema_migrations`
+
+Created by `scripts/migrate.mjs`.
+
+| Column | Type | Null | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `name` | text | NN | — | PK. Migration file name, e.g. `001_admin_auth.sql` |
+| `applied_at` | timestamptz | NN | `now()` | |
+
 ---
 
 ## 6. Triggers and functions
 
-There are exactly **three triggers** in the database: two that maintain `updated_at` (§6.1–6.2) and one that maintains `search_vector` (§6.3).
+There are **six triggers** in the database: three that maintain `updated_at` (§6.1–6.2), one that maintains `search_vector` (§6.3) and two that keep `admin_audit_log` append-only (§6.4).
 
 ### 6.1 Function: `public.set_updated_at()`
 
@@ -350,6 +418,7 @@ What it does:
 | --- | --- | --- | --- | --- | --- |
 | `apps_set_updated_at` | `public.apps` | `BEFORE` | `UPDATE`, `FOR EACH ROW` | `EXECUTE FUNCTION set_updated_at()` | Yes (`O`, origin) |
 | `releases_set_updated_at` | `public.releases` | `BEFORE` | `UPDATE`, `FOR EACH ROW` | `EXECUTE FUNCTION set_updated_at()` | Yes (`O`, origin) |
+| `admin_users_set_updated_at` | `public.admin_users` | `BEFORE` | `UPDATE`, `FOR EACH ROW` | `EXECUTE FUNCTION set_updated_at()` | Yes (`O`, origin) |
 | `apps_set_search_vector` | `public.apps` | `BEFORE` | `INSERT`, or `UPDATE OF name, tagline, about`, `FOR EACH ROW` | `EXECUTE FUNCTION apps_set_search_vector()` | Yes (`O`, origin) |
 
 Definitions, as reported by `pg_get_triggerdef`:
@@ -366,7 +435,7 @@ Behaviour to know about:
 - **Fires on every `UPDATE`, even when no data changed.** An update that sets a column to its current value still bumps `updated_at`.
 - **Does not fire on `INSERT`.** On insert, `updated_at` gets its column default, `now()`. That is the transaction start time. After an insert, `created_at` and `updated_at` are the same.
 - **`now()` vs `clock_timestamp()`.** The default uses `now()`, which is the start of the transaction. The trigger uses `clock_timestamp()`, which is the time the row is written. Inside one long transaction, the insert value and the update value can differ in meaning. This is expected.
-- **Other tables have no `updated_at` trigger.** `app_*`, `categories`, `licenses`, `release_assets`, `download_events` and the lookup tables have no `updated_at` column or trigger.
+- **Other tables have no `updated_at` trigger.** `admin_sessions`, `admin_audit_log`, `app_*`, `categories`, `licenses`, `release_assets`, `download_events` and the lookup tables have no `updated_at` column or trigger.
 - **`created_at` is never touched by a trigger.** Set it at insert time only.
 
 ### 6.3 Function and trigger: `apps_set_search_vector`
@@ -392,6 +461,21 @@ CREATE TRIGGER apps_set_search_vector BEFORE INSERT OR UPDATE OF name, tagline, 
 - Search example: `WHERE search_vector @@ websearch_to_tsquery('english', 'file manager')` returns `yazi`. `'fuzzy'` returns `fzf`.
 - Backfilled for all 8 existing apps on 2026-11-01.
 
+### 6.4 Function and triggers: `admin_audit_log_append_only`
+
+The app connects as the table owner (`avnadmin`), so `REVOKE UPDATE, DELETE` would have no effect. Triggers enforce append-only instead:
+
+```sql
+CREATE TRIGGER admin_audit_log_append_only BEFORE UPDATE OR DELETE ON public.admin_audit_log
+  FOR EACH ROW EXECUTE FUNCTION public.admin_audit_log_append_only();
+CREATE TRIGGER admin_audit_log_no_truncate BEFORE TRUNCATE ON public.admin_audit_log
+  FOR EACH STATEMENT EXECUTE FUNCTION public.admin_audit_log_append_only();
+```
+
+- `UPDATE`, `DELETE` and `TRUNCATE` raise `insufficient_privilege` ("admin_audit_log is append-only").
+- One exception: an `UPDATE` that only sets `user_id` from a value to `NULL` is allowed. That is what the `ON DELETE SET NULL` foreign key does when an admin user is deleted, so the history stays.
+- A superuser can still disable triggers. This guards against application bugs and a compromised app session, not against a compromised database owner.
+
 ---
 
 ## 7. Constraints summary
@@ -401,11 +485,13 @@ CREATE TRIGGER apps_set_search_vector BEFORE INSERT OR UPDATE OF name, tagline, 
 | Primary keys | Every table | `apps.id`, `releases.id`, `release_assets.id`, `download_events.id` (uuid). Composite keys on `app_licenses`, `app_features`, `app_demo_lines`, `app_os_support`, `app_packages`. Integer keys on lookup tables |
 | Foreign keys — cascade | `app_*` tables, `releases`, `release_assets`, `download_events` | Deleting an `apps` row removes its features, demo lines, OS support, packages, licenses, releases and their assets. Deleting an asset removes its download events |
 | Foreign keys — restrict | `apps.category_id`, `apps.language_id`, `app_licenses.license_id`, `app_packages.package_manager_id`, `package_managers.distro_id` | You can't delete a category, language, license, package manager or distro that is still referenced |
-| Foreign keys — set null | `download_events.detected_distro_id` | Deleting a distro sets it to NULL in old events |
-| Unique | `apps.slug`, `apps (github_owner, github_repo)`, `categories.slug`, `licenses.spdx_id`, `linux_distros.slug`, `package_managers.slug`, `programming_languages.name`, `releases (app_id, version)`, `release_assets (release_id, os, arch)` | |
+| Foreign keys — set null | `download_events.detected_distro_id`, `admin_audit_log.user_id` | Deleting a distro sets it to NULL in old events. Deleting an admin keeps their audit rows with `user_id` NULL |
+| Foreign keys — admin cascade | `admin_sessions.user_id` | Deleting an admin removes their sessions |
+| Unique | `apps.slug`, `apps (github_owner, github_repo)`, `categories.slug`, `licenses.spdx_id`, `linux_distros.slug`, `package_managers.slug`, `programming_languages.name`, `releases (app_id, version)`, `release_assets (release_id, os, arch)`, `admin_users.email`, `admin_sessions.token_hash` | |
 | Check — slugs | `apps`, `categories`, `linux_distros`, `package_managers` | `^[a-z0-9][a-z0-9-]*$` |
 | Check — values | `apps.stars_count >= 0`, `apps.forks_count >= 0`, `app_features.ordinal > 0`, `app_demo_lines.line_no > 0`, `release_assets.size_bytes > 0` | |
 | Check — formats | `apps.github_owner`, `apps.github_repo`, `releases.version`, `releases.release_url`, `release_assets.file_name`, `release_assets.sha256`, `release_assets.download_url`, `package_managers.command_template` | See §5 |
+| Check — admin | `admin_users.email` (lower case, format), `admin_users.password_hash` (Argon2id PHC), `admin_users.failed_login_count >= 0`, `admin_sessions.token_hash`/`csrf_secret` (32 bytes), `admin_sessions` expiry order, `admin_audit_log.action` format | See §5.15–5.17 |
 | Not null | All columns marked NN in §5 | |
 
 ---
@@ -429,6 +515,12 @@ CREATE TRIGGER apps_set_search_vector BEFORE INSERT OR UPDATE OF name, tagline, 
 | `release_assets_app_os_idx` | release_assets | `(app_id, os)` | Downloads per app and OS |
 | `download_events_asset_idx` | download_events | `(asset_id, occurred_at DESC)` | Per-asset history |
 | `download_events_time_idx` | download_events | `BRIN (occurred_at)` | Large time-range scans. BRIN is cheap but only useful for big tables |
+| `admin_users_email_key` | admin_users | `(email)` UNIQUE | Login lookup |
+| `admin_sessions_token_hash_key` | admin_sessions | `(token_hash)` UNIQUE | Session lookup by cookie |
+| `admin_sessions_user_idx` | admin_sessions | `(user_id)` | Revoke all sessions of a user |
+| `admin_sessions_expires_idx` | admin_sessions | `(expires_at)` | Delete expired sessions |
+| `admin_audit_log_time_idx` | admin_audit_log | `BRIN (occurred_at)` | Time-range scans |
+| `admin_audit_log_user_idx` | admin_audit_log | `(user_id, occurred_at DESC)` | History per admin |
 | Primary keys and unique keys on lookup tables | categories, licenses, linux_distros, package_managers, programming_languages | — | |
 
 ---
@@ -456,7 +548,7 @@ set -a; . ./.env; set +a; export PGSSLROOTCERT="$PWD/certs/ca.pem"
 # tables, views, functions
 psql "$DATABASE_URL" -c '\dt public.*' -c '\dv public.*' -c '\df public.*'
 
-# triggers (should list exactly apps_set_updated_at and releases_set_updated_at)
+# triggers (should list the six triggers in §6.2 and §6.4)
 psql "$DATABASE_URL" -c "select c.relname, t.tgname, pg_get_triggerdef(t.oid)
   from pg_trigger t join pg_class c on c.oid = t.tgrelid
   join pg_namespace n on n.oid = c.relnamespace
@@ -474,7 +566,20 @@ psql "$DATABASE_URL" -c "select conrelid::regclass::text, conname, contype, pg_g
 
 ## 11. Changing the schema
 
-- Make schema changes in a migration or with `psql`, and record them here.
+Migrations live in `db/migrations/` as `NNN_name.sql`. `scripts/migrate.mjs` applies the pending ones in name order. Each file runs once, in its own transaction, under an advisory lock, and is recorded in `schema_migrations`. Write migrations so they can be re-run (`IF NOT EXISTS`, `CREATE OR REPLACE`, `DROP TRIGGER IF EXISTS`).
+
+```bash
+npm run db:migrate -- --dry     # list pending migrations
+npm run db:migrate              # apply them
+npm run admin:create -- --email you@example.com --name "You"   # first admin (password prompted, not echoed)
+npm run admin:create -- --email you@example.com --reset        # reset a password, revokes all sessions
+```
+
+| Migration | Applied | Change |
+| --- | --- | --- |
+| `001_admin_auth.sql` | 2026-11-01 | `admin_users`, `admin_sessions`, `admin_audit_log`, append-only triggers |
+
+- Make schema changes in a new migration file, and record them here.
 - If you change `set_updated_at()` or the triggers, update §6 as well.
 - Any change to `apps` or `releases` triggers will also affect `updated_at` for existing rows on their next update.
 - Confirm `.env` is not committed (`.gitignore`) and never paste connection strings into docs, issues or chat.
