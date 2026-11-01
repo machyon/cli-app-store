@@ -176,12 +176,27 @@ export function clientIp(request: Request): string | null {
 }
 
 const hits = new Map<string, { count: number; resetAt: number }>();
+const MAX_KEYS = 5000;
+
+/* Bounded memory without a full clear(): a clear() would let anyone reset every
+ * limit (including other IPs') by spraying unique keys. Drop expired windows
+ * first, then the oldest tenth. */
+function evict(now: number): void {
+  for (const [k, v] of hits) if (v.resetAt <= now) hits.delete(k);
+  if (hits.size < MAX_KEYS) return;
+  let drop = Math.ceil(MAX_KEYS / 10);
+  for (const k of hits.keys()) {
+    if (drop-- <= 0) break;
+    hits.delete(k);
+  }
+}
 
 export function rateLimit(key: string, max: number, windowMs: number): number | null {
   const now = Date.now();
   const entry = hits.get(key);
   if (!entry || entry.resetAt <= now) {
-    if (hits.size > 5000) hits.clear();
+    if (hits.size >= MAX_KEYS) evict(now);
+    hits.delete(key); // re-insert so Map order stays oldest-first
     hits.set(key, { count: 1, resetAt: now + windowMs });
     return null;
   }
